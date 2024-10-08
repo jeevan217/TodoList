@@ -14,10 +14,11 @@ struct ContentView: View {
                         .padding()
                     
                     Button(action: {
-                        if !newTaskTitle.isEmpty {
-                            taskViewModel.addTask(title: newTaskTitle)
-                            newTaskTitle = ""
-                        }
+                                            let trimmedTaskTitle = newTaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+                                            if !trimmedTaskTitle.isEmpty {
+                                                taskViewModel.addTask(title: trimmedTaskTitle)
+                                                newTaskTitle = ""
+                                            }    
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.largeTitle)
