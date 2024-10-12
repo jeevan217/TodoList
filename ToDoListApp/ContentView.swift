@@ -85,9 +85,8 @@ struct ContentView: View {
                         .offset(y: 40)
                 }
             }
-            .onTapGesture {
-                           isFocused = false // Dismiss the keyboard by resigning focus
-                       }
+
+        
         }
     }
     
