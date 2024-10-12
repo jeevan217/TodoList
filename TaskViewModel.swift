@@ -5,7 +5,7 @@ class TaskViewModel: ObservableObject {
 
     // Add new task
     func addTask(title: String) {
-        let newTask = Task(title: title, isCompleted: false)
+        let newTask = Task(title: title)
         tasks.append(newTask)
     }
 
