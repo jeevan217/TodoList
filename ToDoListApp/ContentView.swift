@@ -4,16 +4,23 @@ struct ContentView: View {
     @StateObject var taskViewModel = TaskViewModel()
     @State private var newTaskTitle = ""
     @State private var showAlert = false
+    @FocusState private var isFocused: Bool          // State to manage TextField focus
     
     var body: some View {
         NavigationView {
             VStack {
                 HStack {
                     TextField("Enter new task", text: $newTaskTitle)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
+                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                                            .padding()
+                                            .focused($isFocused) // Link TextField focus to isFocused state
+                                            .onSubmit {
+                                                addNewTask()  // Trigger the function on Return key press
+                                                isFocused = true // Keep the focus on TextField
+                                            }
                     
                     Button(action: {
+                                            isFocused = true
                                             let trimmedTaskTitle = newTaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
                                             if !trimmedTaskTitle.isEmpty {
                                                 taskViewModel.addTask(title: trimmedTaskTitle)
@@ -23,7 +30,7 @@ struct ContentView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.largeTitle)
                             .foregroundStyle(.white)
-                            .padding()
+                            .offset(x: -10)
                     }
                 }
                 
@@ -67,17 +74,34 @@ struct ContentView: View {
             }
             
             .background(Color("EDE8DC")) // <-- Add your background color here
+            .onAppear {
+                isFocused = true // Set initial focus to TextField
+            }
             .toolbar {
                 ToolbarItem(placement: .principal) { // Centers the title
                     Text("To-Do List")
-                        .font(.custom("Caveat-Bold", size: 38))
+                        .font(.largeTitle)
                         .bold()
-                        .offset(y: 30)
+                        .offset(y: 40)
                 }
             }
-            
+            .onTapGesture {
+                           isFocused = false // Dismiss the keyboard by resigning focus
+                       }
         }
     }
+    
+    // Function to handle adding a new task
+        func addNewTask() {
+            let trimmedTaskTitle = newTaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmedTaskTitle.isEmpty {
+                taskViewModel.addTask(title: trimmedTaskTitle)
+                newTaskTitle = "" // Clear the text field after adding
+            }
+            DispatchQueue.main.async {
+                        isFocused = true // Immediately refocus after adding task
+                    }
+        }
     
     struct ContentView_Previews: PreviewProvider {
         static var previews: some View {
